@@ -1,0 +1,16 @@
+# dependencias y artefactos
+node_modules/
+dist/
+build/
+coverage/
+
+# sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# entorno local
+.env
+.env.local
+.venv/
+__pycache__/

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F7F6F2">
+  <meta name="description" content="Mi Refri Inteligente: controla lo que tienes, rescata lo que está por vencer y cocina con lo que ya está en tu nevera.">
+  <title>Mi Refri Inteligente</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- ================= Sidebar ================= -->
+    <aside class="sidebar">
+      <a class="brand" href="#" data-nav="inicio" aria-label="Mi Refri Inteligente, ir al inicio">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none"><rect x="9" y="3" width="22" height="34" rx="6" stroke="currentColor" stroke-width="2.4"/><path d="M9 15h22" stroke="currentColor" stroke-width="2.4"/><path d="M14 8.5v3M14 19.5v4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </span>
+        <span class="brand__text">
+          <strong>Mi Refri</strong>
+          <small>inteligente</small>
+        </span>
+      </a>
+
+      <nav class="side-nav" aria-label="Navegación principal">
+        <button type="button" class="side-nav__item is-active" data-nav="inicio">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <span>Inicio</span>
+        </button>
+        <button type="button" class="side-nav__item" data-nav="nevera">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5 9.5h14M8.5 5.5v1.5M8.5 12.5v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Mi nevera</span>
+          <span class="side-nav__count" id="navCountNevera">0</span>
+        </button>
+        <button type="button" class="side-nav__item" data-nav="recetas">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20V9.5a8 8 0 0 1 16 0V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 20h18M8.5 13.5c1 1.2 2 1.2 3 0s2-1.2 3 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Cocinar</span>
+        </button>
+        <button type="button" class="side-nav__item" data-nav="compras">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2.2l2.3 11.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.4" fill="currentColor"/><circle cx="17.5" cy="20" r="1.4" fill="currentColor"/></svg>
+          <span>Compras</span>
+          <span class="side-nav__count side-nav__count--soft" id="navCountCompras">0</span>
+        </button>
+        <button type="button" class="side-nav__item" data-nav="impacto">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 18V9m5 9V5m5 13v-7m5 7V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Impacto</span>
+        </button>
+      </nav>
+
+      <div class="side-card" id="sideHealthCard">
+        <div class="side-card__top">
+          <span class="side-card__label">Estado de la nevera</span>
+          <span class="pill pill--mint" id="sideHealthLabel">Excelente</span>
+        </div>
+        <div class="meter"><span id="sideHealthBar"></span></div>
+        <p class="side-card__hint" id="sideHealthHint">Todo bajo control</p>
+      </div>
+
+      <div class="side-tip">
+        <span aria-hidden="true">💡</span>
+        <p>Consejo del día: revisa la nevera antes de salir al súper.</p>
+      </div>
+
+      <button type="button" class="side-theme" id="themeToggle" aria-label="Cambiar tema">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span id="themeLabel">Modo oscuro</span>
+      </button>
+    </aside>
+
+    <!-- ================= Contenido ================= -->
+    <main class="main" id="main">
+      <header class="topbar">
+        <div class="topbar__greeting">
+          <p class="eyebrow" id="todayLabel">Hoy</p>
+          <h1 id="greeting">Buenas tardes</h1>
+        </div>
+        <div class="topbar__actions">
+          <button type="button" class="icon-btn" id="searchBtn" aria-label="Buscar en la nevera">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <button type="button" class="btn btn--primary" id="addBtn">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span>Agregar producto</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="views">
+        <!-- ============ INICIO ============ -->
+        <section class="view is-active" id="view-inicio" data-view="inicio" aria-labelledby="title-inicio">
+          <div class="hero">
+            <div class="hero__copy">
+              <span class="pill pill--cream" id="heroBadge">🧊 3 productos necesitan atención</span>
+              <h2 class="hero__title" id="title-inicio">Tu nevera,<br><em>bajo control.</em></h2>
+              <p class="hero__sub">Hoy tienes <strong id="heroItems">0 productos</strong> y <strong id="heroValue">$0</strong> en comida. Te ayudamos a que nada termine en la basura.</p>
+              <div class="hero__cta">
+                <button type="button" class="btn btn--dark" data-nav="recetas">
+                  <span>Ver qué puedo cocinar</span>
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button type="button" class="btn btn--ghost" data-nav="nevera">Revisar inventario</button>
+              </div>
+              <div class="hero__stats">
+                <div><strong id="heroUrgent">0</strong><span>por vencer</span></div>
+                <div><strong id="heroExpired">0</strong><span>vencidos</span></div>
+                <div><strong id="heroRecipes">0</strong><span>recetas listas</span></div>
+              </div>
+            </div>
+            <div class="hero__art" aria-hidden="true">
+              <div class="fridge">
+                <div class="fridge__body">
+                  <div class="fridge__door">
+                    <span class="fridge__handle"></span>
+                    <span class="fridge__line"></span>
+                    <span class="fridge__magnet">🧾</span>
+                  </div>
+                  <div class="fridge__shelf">
+                    <span class="food">🥛</span><span class="food">🍅</span><span class="food">🧀</span>
+                  </div>
+                  <div class="fridge__shelf fridge__shelf--2">
+                    <span class="food">🥬</span><span class="food">🍋</span><span class="food">🥚</span>
+                  </div>
+                </div>
+                <div class="fridge__base"></div>
+              </div>
+              <div class="art-badge art-badge--1">
+                <span class="art-badge__emoji">🥬</span>
+                <div><strong>Rescata 1</strong><small>vence hoy</small></div>
+              </div>
+              <div class="art-badge art-badge--2">
+                <span class="art-badge__emoji">🍝</span>
+                <div><strong>Pasta lista</strong><small>sin comprar nada</small></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="block__head">
+              <div>
+                <h3>Necesita atención</h3>
+                <p>Lo que se vence primero. Úsalo o descártalo con un toque.</p>
+              </div>
+              <button type="button" class="link-btn" data-nav="nevera">Ver todo
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+            <div class="attention-grid" id="attentionGrid"></div>
+          </div>
+
+          <div class="block">
+            <div class="block__head">
+              <div>
+                <h3>Cocina con lo que tienes</h3>
+                <p>Recetas ordenadas por lo que ya está en tu nevera.</p>
+              </div>
+              <button type="button" class="link-btn" data-nav="recetas">Todas las recetas
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+            <div class="recipe-row" id="homeRecipes"></div>
+          </div>
+
+          <div class="split">
+            <div class="block">
+              <div class="block__head">
+                <div>
+                  <h3>Tu próxima compra</h3>
+                  <p>Sugerencias según lo que usas y lo que falta.</p>
+                </div>
+                <button type="button" class="link-btn" data-nav="compras">Ir a compras
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+              <div class="suggest-list" id="homeSuggestions"></div>
+            </div>
+
+            <div class="block">
+              <div class="block__head">
+                <div>
+                  <h3>Tu impacto este mes</h3>
+                  <p>Pequeños hábitos, gran diferencia.</p>
+                </div>
+                <button type="button" class="link-btn" data-nav="impacto">Ver impacto
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+              <div class="impact-card" id="homeImpact"></div>
+            </div>
+          </div>
+
+          <div class="tips-row" id="tipsRow"></div>
+        </section>
+
+        <!-- ============ NEVERA ============ -->
+        <section class="view" id="view-nevera" data-view="nevera" aria-labelledby="title-nevera">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Inventario</p>
+              <h2 class="page-title" id="title-nevera">Mi nevera</h2>
+              <p class="page-sub" id="neveraSub">0 productos</p>
+            </div>
+            <button type="button" class="btn btn--primary" data-open-add>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>Agregar</span>
+            </button>
+          </div>
+
+          <div class="inventory-summary" id="inventorySummary"></div>
+
+          <div class="toolbar">
+            <label class="search">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="search" id="searchInput" placeholder="Buscar producto…" autocomplete="off">
+            </label>
+            <div class="segmented" id="freshnessFilter" role="tablist" aria-label="Filtrar por estado">
+              <button type="button" class="segmented__item is-active" data-fresh="all">Todos</button>
+              <button type="button" class="segmented__item" data-fresh="urgent">Por vencer</button>
+              <button type="button" class="segmented__item" data-fresh="expired">Vencidos</button>
+              <button type="button" class="segmented__item" data-fresh="fresh">Frescos</button>
+            </div>
+            <label class="select">
+              <span>Ordenar</span>
+              <select id="sortSelect">
+                <option value="expiry">Por vencer primero</option>
+                <option value="name">Nombre A–Z</option>
+                <option value="recent">Recién agregados</option>
+                <option value="category">Categoría</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="chips" id="categoryChips"></div>
+
+          <div class="inventory-grid" id="inventoryGrid"></div>
+          <div class="empty" id="inventoryEmpty" hidden>
+            <span class="empty__emoji">🧺</span>
+            <h4>No hay nada por aquí</h4>
+            <p>Agrega tu primer producto o cambia los filtros.</p>
+            <button type="button" class="btn btn--primary" data-open-add>Agregar producto</button>
+          </div>
+        </section>
+
+        <!-- ============ RECETAS ============ -->
+        <section class="view" id="view-recetas" data-view="recetas" aria-labelledby="title-recetas">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Cocina sin salir de casa</p>
+              <h2 class="page-title" id="title-recetas">¿Qué cocino hoy?</h2>
+              <p class="page-sub" id="recipesSub">Recetas posibles con tu inventario</p>
+            </div>
+          </div>
+
+          <div class="recipe-filters">
+            <div class="segmented" id="recipeFilter" role="tablist" aria-label="Filtrar recetas">
+              <button type="button" class="segmented__item is-active" data-filter="all">Todas</button>
+              <button type="button" class="segmented__item" data-filter="ready">Listas para cocinar</button>
+              <button type="button" class="segmented__item" data-filter="quick">Rápidas (≤15 min)</button>
+              <button type="button" class="segmented__item" data-filter="veg">Vegetarianas</button>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="onlyPantry" checked>
+              <span class="toggle__track"><span class="toggle__dot"></span></span>
+              <span>Solo con lo que tengo</span>
+            </label>
+          </div>
+
+          <div class="recipe-grid" id="recipeGrid"></div>
+          <div class="empty" id="recipeEmpty" hidden>
+            <span class="empty__emoji">🥄</span>
+            <h4>Sin coincidencias</h4>
+            <p>Prueba quitando el filtro "solo con lo que tengo" o agrega más productos.</p>
+          </div>
+        </section>
+
+        <!-- ============ COMPRAS ============ -->
+        <section class="view" id="view-compras" data-view="compras" aria-labelledby="title-compras">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Lista inteligente</p>
+              <h2 class="page-title" id="title-compras">Lista de compras</h2>
+              <p class="page-sub" id="shoppingSub">0 pendientes</p>
+            </div>
+            <button type="button" class="btn btn--soft" id="moveToPantryBtn">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h12m0 0-4-4m4 4-4 4M18 5v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Pasar comprados a la nevera</span>
+            </button>
+          </div>
+
+          <div class="shopping-layout">
+            <div class="block">
+              <form class="shopping-form" id="shoppingForm">
+                <label class="search">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <input type="text" id="shoppingInput" placeholder="Agregar a la lista: leche, limones…" autocomplete="off" required>
+                </label>
+                <input class="qty-input" type="number" id="shoppingQty" value="1" min="0.25" step="0.25" aria-label="Cantidad">
+                <select class="unit-select" id="shoppingUnit" aria-label="Unidad">
+                  <option>uds</option><option>g</option><option>kg</option><option>L</option><option>ml</option>
+                </select>
+                <button class="btn btn--dark" type="submit">Agregar</button>
+              </form>
+
+              <ul class="shopping-list" id="shoppingList"></ul>
+              <div class="empty empty--sm" id="shoppingEmpty" hidden>
+                <span class="empty__emoji">🛒</span>
+                <h4>Tu lista está vacía</h4>
+                <p>Agrega productos o usa las sugerencias de la derecha.</p>
+              </div>
+
+              <div class="shopping-footer" id="shoppingFooter"></div>
+            </div>
+
+            <div class="block">
+              <div class="block__head">
+                <div>
+                  <h3>Te puede faltar</h3>
+                  <p>Basado en tus hábitos y en lo que se acabó.</p>
+                </div>
+              </div>
+              <div class="suggest-list" id="shoppingSuggestions"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ IMPACTO ============ -->
+        <section class="view" id="view-impacto" data-view="impacto" aria-labelledby="title-impacto">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Últimos 30 días</p>
+              <h2 class="page-title" id="title-impacto">Tu impacto</h2>
+              <p class="page-sub">Cada producto rescatado es dinero y comida que no se pierde.</p>
+            </div>
+            <div class="page-head__actions">
+              <button type="button" class="btn btn--soft" id="exportBtn">Exportar datos</button>
+              <button type="button" class="btn btn--ghost" id="settingsBtn">Ajustes</button>
+            </div>
+          </div>
+
+          <div class="impact-grid" id="impactStats"></div>
+
+          <div class="split split--wide">
+            <div class="block chart-card">
+              <div class="block__head">
+                <div>
+                  <h3>Últimos 7 días</h3>
+                  <p>Productos consumidos vs. desperdiciados.</p>
+                </div>
+                <div class="legend">
+                  <span class="legend__item"><i class="dot dot--green"></i>Consumido</span>
+                  <span class="legend__item"><i class="dot dot--red"></i>Desperdiciado</span>
+                </div>
+              </div>
+              <div class="chart" id="weekChart"></div>
+            </div>
+
+            <div class="block ring-card">
+              <div class="block__head">
+                <div>
+                  <h3>Aprovechamiento</h3>
+                  <p>De todo lo que salió de tu nevera.</p>
+                </div>
+              </div>
+              <div class="ring-wrap">
+                <svg class="ring" viewBox="0 0 120 120" id="efficiencyRing" aria-hidden="true">
+                  <circle class="ring__bg" cx="60" cy="60" r="50"></circle>
+                  <circle class="ring__value" cx="60" cy="60" r="50"></circle>
+                </svg>
+                <div class="ring-label">
+                  <strong id="efficiencyValue">0%</strong>
+                  <span>aprovechado</span>
+                </div>
+              </div>
+              <p class="ring-note" id="efficiencyNote"></p>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="block">
+              <div class="block__head">
+                <div>
+                  <h3>Lo que más salvaste</h3>
+                  <p>Productos que usaste antes de que vencieran.</p>
+                </div>
+              </div>
+              <div class="top-list" id="topSaved"></div>
+            </div>
+
+            <div class="block">
+              <div class="block__head">
+                <div>
+                  <h3>Tu despensa por categoría</h3>
+                  <p>Así se reparte lo que tienes hoy.</p>
+                </div>
+              </div>
+              <div class="category-bars" id="categoryBars"></div>
+            </div>
+          </div>
+
+          <div class="block history-block">
+            <div class="block__head">
+              <div>
+                <h3>Historial reciente</h3>
+                <p>Movimientos de los últimos días.</p>
+              </div>
+              <button type="button" class="link-btn" id="resetDemoBtn">Restaurar demo</button>
+            </div>
+            <ul class="history-list" id="historyList"></ul>
+          </div>
+        </section>
+      </div>
+
+      <footer class="footer">
+        <span>Hecho para que nada se pierda 🧊</span>
+        <span class="footer__dot">·</span>
+        <span>Tus datos se guardan solo en este navegador</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ================= Nav móvil ================= -->
+  <nav class="bottom-nav" aria-label="Navegación móvil">
+    <button type="button" class="bottom-nav__item is-active" data-nav="inicio">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span>Inicio</span>
+    </button>
+    <button type="button" class="bottom-nav__item" data-nav="nevera">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5 9.5h14M8.5 5.5v1.5M8.5 12.5v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Nevera</span>
+    </button>
+    <button type="button" class="bottom-nav__add" data-open-add aria-label="Agregar producto">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="bottom-nav__item" data-nav="recetas">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20V9.5a8 8 0 0 1 16 0V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 20h18M8.5 13.5c1 1.2 2 1.2 3 0s2-1.2 3 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Cocinar</span>
+    </button>
+    <button type="button" class="bottom-nav__item" data-nav="compras">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2.2l2.3 11.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.4" fill="currentColor"/><circle cx="17.5" cy="20" r="1.4" fill="currentColor"/></svg>
+      <span>Compras</span>
+    </button>
+  </nav>
+
+  <!-- ================= Modal producto ================= -->
+  <div class="modal" id="itemModal" hidden>
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__panel modal__panel--lg" role="dialog" aria-modal="true" aria-labelledby="itemModalTitle">
+      <div class="modal__head">
+        <div>
+          <p class="eyebrow" id="itemModalEyebrow">Nuevo producto</p>
+          <h3 id="itemModalTitle">Agregar a la nevera</h3>
+        </div>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <form id="itemForm" novalidate>
+        <input type="hidden" id="itemId">
+        <input type="hidden" id="itemCatalogId">
+
+        <div class="field">
+          <label class="field__label" for="itemSearch">¿Qué producto es?</label>
+          <div class="catalog-picker">
+            <label class="search search--block">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="text" id="itemSearch" placeholder="Busca: leche, tomate, pollo…" autocomplete="off">
+            </label>
+            <div class="catalog-grid" id="catalogGrid"></div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field field--wide">
+            <label class="field__label" for="itemName">Nombre</label>
+            <input class="input" type="text" id="itemName" placeholder="Ej. Leche entera" required>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="itemCategory">Categoría</label>
+            <select class="input" id="itemCategory"></select>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="itemEmoji">Emoji</label>
+            <input class="input input--emoji" type="text" id="itemEmoji" maxlength="4" value="🍽️">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="itemQty">Cantidad</label>
+            <div class="stepper">
+              <button type="button" class="stepper__btn" data-step="-1" aria-label="Restar">−</button>
+              <input class="input input--center" type="number" id="itemQty" min="0.25" step="0.25" value="1" required>
+              <button type="button" class="stepper__btn" data-step="1" aria-label="Sumar">+</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="itemUnit">Unidad</label>
+            <select class="input" id="itemUnit"></select>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="itemExpires">Vence el</label>
+            <input class="input" type="date" id="itemExpires" required>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="itemPrice">Precio estimado</label>
+            <div class="input-prefix">
+              <span>$</span>
+              <input class="input" type="number" id="itemPrice" min="0" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-expiry" id="quickExpiry"></div>
+
+        <div class="modal__foot">
+          <button type="button" class="btn btn--ghost" data-close-modal>Cancelar</button>
+          <button type="submit" class="btn btn--primary" id="itemSubmit">Agregar a la nevera</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= Modal receta ================= -->
+  <div class="modal" id="recipeModal" hidden>
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="recipeModalTitle">
+      <div class="modal__head">
+        <div>
+          <p class="eyebrow">Receta</p>
+          <h3 id="recipeModalTitle">Receta</h3>
+        </div>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="recipe-detail" id="recipeDetail"></div>
+    </div>
+  </div>
+
+  <!-- ================= Modal ajustes ================= -->
+  <div class="modal" id="settingsModal" hidden>
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal__head">
+        <div>
+          <p class="eyebrow">Preferencias</p>
+          <h3 id="settingsTitle">Ajustes</h3>
+        </div>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="settings-list">
+        <div class="settings-row">
+          <div><strong>Modo oscuro</strong><small>Más cómodo de noche</small></div>
+          <label class="toggle">
+            <input type="checkbox" id="settingsTheme">
+            <span class="toggle__track"><span class="toggle__dot"></span></span>
+            <span class="sr-only">Modo oscuro</span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <div><strong>Cargar datos de ejemplo</strong><small>Reemplaza tu inventario por la demostración</small></div>
+          <button type="button" class="btn btn--soft" id="settingsDemo">Cargar demo</button>
+        </div>
+        <div class="settings-row">
+          <div><strong>Vaciar todo</strong><small>Borra inventario, historia y compras</small></div>
+          <button type="button" class="btn btn--danger" id="settingsClear">Vaciar</button>
+        </div>
+        <div class="settings-row">
+          <div><strong>Importar datos</strong><small>Restaura un archivo exportado</small></div>
+          <label class="btn btn--ghost file-btn">Elegir archivo<input type="file" id="importInput" accept="application/json" hidden></label>
+        </div>
+      </div>
+      <div class="modal__foot">
+        <button type="button" class="btn btn--primary" data-close-modal>Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
