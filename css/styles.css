@@ -399,6 +399,7 @@ a { color: inherit; text-decoration: none; }
 .pill--blue { background: var(--blue-soft); color: #3A6398; }
 
 /* ---------- views ---------- */
+.views { min-height: 60vh; }
 .view { display: none; }
 .view.is-active { display: block; animation: viewIn .45s var(--ease) both; }
 
@@ -1350,6 +1351,7 @@ a { color: inherit; text-decoration: none; }
 .stat-card--accent .stat-card__delta { color: #B5E3C9; }
 
 .split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.split--wide { grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr); }
 .split .block { margin-top: 30px; }
 
 .chart-card { min-height: 100%; }
@@ -1758,7 +1760,7 @@ a { color: inherit; text-decoration: none; }
   .hero { grid-template-columns: 1fr; }
   .hero__art { display: none; }
   .hero__title { font-size: clamp(36px, 6vw, 52px); }
-  .split { grid-template-columns: 1fr; }
+  .split, .split--wide { grid-template-columns: 1fr; }
   .split .block { margin-top: 24px; }
   .shopping-layout { grid-template-columns: 1fr; }
 }
